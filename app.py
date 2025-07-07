@@ -6,7 +6,7 @@ st.title("🤖 Qwen Model Studio Chatbot")
 api_key = st.sidebar.text_input("API Key:", type="password", value="sk-ce46c47e696542268e5f3745d56ef034")
 
 def query_qwen(text, api_key):
-    url = "https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation"
+    url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
     
     headers = {
         "Authorization": f"Bearer {api_key}",

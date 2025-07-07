@@ -1,10 +1,8 @@
 import streamlit as st
 import requests
-import json
 
 # Judul aplikasi
 st.title("🤖 Qwen Chatbot")
-st.write("Powered by DashScope International")
 
 # Sidebar untuk API key
 st.sidebar.title("Pengaturan")
@@ -15,14 +13,27 @@ api_key = st.sidebar.text_input(
 )
 
 # Pilihan model
-model_options = ["qwen-max", "qwen-plus", "qwen-turbo"]
-selected_model = st.sidebar.selectbox("Pilih Model:", model_options)
+model_type = st.sidebar.radio(
+    "Jenis Model:",
+    ["Model Standar", "Model Custom"]
+)
+
+if model_type == "Model Standar":
+    model_options = ["qwen-max", "qwen-plus", "qwen-turbo"]
+    selected_model = st.sidebar.selectbox("Pilih Model:", model_options)
+else:
+    # Input untuk custom model ID
+    selected_model = st.sidebar.text_input(
+        "Custom Model ID:", 
+        value="4e4b442cf70b4264999d54e5c3887afd",
+        help="Masukkan ID model custom Anda"
+    )
 
 # Parameter
 temperature = st.sidebar.slider("Temperature:", 0.0, 2.0, 0.7, 0.1)
 max_tokens = st.sidebar.slider("Max Tokens:", 50, 2000, 500, 50)
 
-# Fungsi untuk chat dengan Qwen
+# Fungsi chat
 def chat_with_qwen(message, api_key, model, temp, max_tok):
     url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
     
@@ -53,30 +64,29 @@ def chat_with_qwen(message, api_key, model, temp, max_tok):
         return f"Error: {str(e)}"
 
 # Area chat
-st.header("💬 Chat dengan Qwen")
+st.header("💬 Chat")
+
+# Tampilkan model yang digunakan
+if model_type == "Model Custom":
+    st.info(f"🎯 Menggunakan custom model: `{selected_model}`")
+else:
+    st.info(f"🤖 Menggunakan model: `{selected_model}`")
 
 # Input pengguna
-user_input = st.text_area("Tulis pesan Anda:", height=100, placeholder="Ketik pertanyaan atau pesan di sini...")
+user_input = st.text_area("Tulis pesan:", height=100)
 
 # Tombol kirim
 if st.button("🚀 Kirim", type="primary"):
-    if user_input and api_key:
-        with st.spinner(f"🤔 {selected_model} sedang berpikir..."):
+    if user_input and api_key and selected_model:
+        with st.spinner("🤔 Sedang memproses..."):
             response = chat_with_qwen(user_input, api_key, selected_model, temperature, max_tokens)
         
-        # Tampilkan response
-        st.success("✅ Response dari Qwen:")
+        st.success("✅ Response:")
         st.write(response)
         
-    elif not user_input:
-        st.warning("⚠️ Silakan tulis pesan terlebih dahulu!")
-    elif not api_key:
-        st.error("❌ Silakan masukkan API Key!")
-
-# Info
-st.markdown("---")
-st.info("💡 **Tips:** Gunakan temperature rendah (0.1-0.3) untuk jawaban konsisten, atau tinggi (0.7-1.0) untuk jawaban kreatif.")
+    else:
+        st.warning("⚠️ Lengkapi semua field!")
 
 # Footer
 st.markdown("---")
-st.caption("Dibuat dengan ❤️ menggunakan Streamlit dan Qwen API")
+st.caption("Support model standar dan custom fine-tuned")

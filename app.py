@@ -1,39 +1,34 @@
-import streamlit as st
 import requests
+import json
 
-st.title("🤖 Qwen Model Studio Chatbot")
+api_key = "sk-ce46c47e696542268e5f3745d56ef034"
+url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
 
-api_key = st.sidebar.text_input("API Key:", type="password", value="sk-ce46c47e696542268e5f3745d56ef034")
+headers = {
+    "Authorization": f"Bearer {api_key}",
+    "Content-Type": "application/json"
+}
 
-def query_qwen(text, api_key):
-    url = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions"
+data = {
+    "model": "qwen-max",
+    "messages": [
+        {"role": "user", "content": "Hello"}
+    ],
+    "max_tokens": 100
+}
+
+try:
+    response = requests.post(url, headers=headers, json=data, timeout=30)
     
-    headers = {
-        "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
-        "X-DashScope-SSE": "disable"
-    }
+    print(f"Status Code: {response.status_code}")
+    print(f"Response: {response.text}")
     
-    data = {
-        "model": "qwen-turbo",
-        "input": {
-            "prompt": text
-        }
-    }
-    
-    response = requests.post(url, headers=headers, json=data)
-    return response.json()
-
-user_input = st.text_input("Pesan:")
-
-if user_input and api_key:
-    try:
-        result = query_qwen(user_input, api_key)
-        st.write("Debug response:", result)  # Untuk lihat response asli
+    if response.status_code == 200:
+        result = response.json()
+        print("✅ BERHASIL!")
+        print(f"AI Response: {result['choices'][0]['message']['content']}")
+    else:
+        print("❌ Ada error")
         
-        if "output" in result:
-            st.write("🤖 Qwen:", result["output"]["text"])
-        else:
-            st.error(f"Error: {result}")
-    except Exception as e:
-        st.error(f"Error: {e}")
+except Exception as e:
+    print(f"Error: {e}")

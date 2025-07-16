@@ -6,10 +6,10 @@ from dashscope import Application
 import dashscope
 
 # --- Configuration ---
-DASHSCOPE_API_KEY = "sk-4619351667f34e5f82aa482e0e23ee6e"
+DASHSCOPE_API_KEY = "sk-ce46c47e696542268e5f3745d56ef034"
 BASE_URL = "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
 APP_API_URL = "https://dashscope-intl.aliyuncs.com/api/v1"
-APP_ID = "1985617e94bb4d9291b1896194455aef"
+APP_ID = "4e4b442cf70b4264999d54e5c3887afd"
 
 # Set global API key and URL for DashScope Application
 dashscope.api_key = DASHSCOPE_API_KEY
